@@ -26,3 +26,9 @@ that does the following.
   - If so, jump to step 5
 4. Exit successfully
 5. Send alert that something is wrong with boat.
+
+## Commands
+
+```shell
+npm run deploy
+```
