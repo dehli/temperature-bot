@@ -1,0 +1,12 @@
+# Access keys corresponding to User in CloudFormation stack
+AWS_ACCESS_KEY_ID="..."
+AWS_SECRET_ACCESS_KEY="..."
+
+# Key that the device should store temperature readings to
+TEMPERATURE_DEVICE_KEY="..."
+
+# File path to read temperature readings from
+TEMPERATURE_FILE_PATH="/sys/bus/w1/devices/..."
+
+# Table where temperature readings will be stored at
+TEMPERATURE_TABLE_NAME="..."

@@ -32,3 +32,8 @@ that does the following.
 ```shell
 npm run deploy
 ```
+
+## Setup on PI
+
+1. Ensure all environment variables are set
+2. Run `pip3 install boto3`
