@@ -30,12 +30,12 @@ table = dynamodb.Table(table_name)
 # Persist temperature to DynamoDB
 table.put_item(
     Item={
-        'key': device_key,
-        'time': int(time_now),
-        'temperature': temperature
+        "key": device_key,
+        "time": int(time_now),
+        "temperature": temperature
     },
-    ConditionExpression='attribute_not_exists(#key)',
+    ConditionExpression="attribute_not_exists(#key)",
     ExpressionAttributeNames={
-        '#key': 'key'
+        "#key": "key"
     }
 )
