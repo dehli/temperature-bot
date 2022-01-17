@@ -38,6 +38,12 @@ npm run deploy
 1. Ensure all environment variables are set
 2. Run `pip3 install boto3`
 3. Copy `./pi/main.py` onto device
-4. Setup Cron
-  - `sudo crontab -e`
-  -  `*/5 * * * * python /home/path/to/main.py\n`
+4. Setup Cron (add the following line to `/etc/crontab`
+
+```shell
+*/5 *   * * *   user-name      . $HOME/.profile; python /home/path/to/main.py
+```
+
+Note:
+`5` can be swapped out for another value depending on how
+often you want to collect the temperature.
