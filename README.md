@@ -37,3 +37,7 @@ npm run deploy
 
 1. Ensure all environment variables are set
 2. Run `pip3 install boto3`
+3. Copy `./pi/main.py` onto device
+4. Setup Cron
+  - `sudo crontab -e`
+  -  `*/5 * * * * python /home/path/to/main.py\n`
