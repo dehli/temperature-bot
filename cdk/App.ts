@@ -20,4 +20,10 @@ const role = new cdk.aws_iam.Role(stack, "WriteToTableRole", {
 
 table.grantWriteData(role);
 
+const user = new cdk.aws_iam.User(stack, "WriteToTableUser");
+user.addToPolicy(new cdk.aws_iam.PolicyStatement({
+  actions: ["sts:AssumeRole"],
+  resources: [role.roleArn],
+}));
+
 app.synth();
