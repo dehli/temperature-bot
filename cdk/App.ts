@@ -15,6 +15,9 @@ const table = new cdk.aws_dynamodb.Table(stack, "TemperatureTable", {
 });
 
 const user = new cdk.aws_iam.User(stack, "WriteToTableUser");
-table.grantWriteData(user);
+user.addToPolicy(new cdk.aws_iam.PolicyStatement({
+  actions: ["dynamodb:PutItem"],
+  resources: [table.tableArn],
+}));
 
 app.synth();
