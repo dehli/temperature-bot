@@ -7,14 +7,15 @@
 
 import boto3
 import decimal
+import re
 import os
 import time
 
 # Pull out environment variables
 aws_region = os.environ.get("AWS_REGION")
 device_key = os.environ.get("TEMPERATURE_DEVICE_KEY")
-table_name = os.environ.get("TEMPERATURE_TABLE_NAME")
 file_path  = os.environ.get("TEMPERATURE_FILE_PATH")
+table_name = os.environ.get("TEMPERATURE_TABLE_NAME")
 
 # Read contents of temperature recordings
 temperature_file = open(file_path)
@@ -23,7 +24,7 @@ temperature_file.close()
 
 if temperature_text:
     time_now = time.time()
-    temperature_string = temperature_text.split("\n")[1].split("t=")[1]
+    temperature_string = re.match("[\s\S]*t=(\d+)", temperature_text).group(1)
     temperature = decimal.Decimal(temperature_string) / 1000
 
     # Setup AWS Clients
