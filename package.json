@@ -10,5 +10,8 @@
     "clean": "rm -rf out",
     "deploy": "npx cdk deploy",
     "predeploy": "npm run clean && npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.12"
   }
 }
