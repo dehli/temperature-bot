@@ -1,4 +1,5 @@
 import boto3
+import json
 import os
 import time
 
@@ -7,6 +8,12 @@ from boto3.dynamodb.conditions import Key, Attr
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table(os.environ.get("TABLE_NAME"))
 partition_key = os.environ.get("PARTITION_KEY")
+
+script_dir = os.path.dirname(__file__)
+file_path = os.path.join(script_dir, "index.html")
+fptr = open(file_path)
+html = fptr.read()
+fptr.close()
 
 def handler(event, lambda_context):
     # Determine timestamp for 24 hours ago (in seconds)
@@ -17,9 +24,18 @@ def handler(event, lambda_context):
         KeyConditionExpression=Key("key").eq(partition_key) & Key("time").gt(timestamp)
     )
 
-    result = map(
-        lambda x: { "temperature": x["temperature"], "time": x["time"] },
-        query_response["Items"]
+    result = list(
+        map(
+            lambda x: { "temperature": float(x["temperature"]), "time": int(x["time"]) },
+            query_response["Items"]
+        )
     )
 
-    return list(result)
+    # Return HTML w/ dynamo response
+    return {
+        "statusCode": 200,
+        "body": html.replace("data = []", "data = " + json.dumps(result)),
+        "headers": {
+            "content-type": "text/html"
+        }
+    }

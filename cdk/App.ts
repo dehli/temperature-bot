@@ -35,18 +35,9 @@ const lambda = new cdk.aws_lambda.Function(stack, "TemperatureLambda", {
 });
 table.grantReadData(lambda);
 
-const api = new cdk.aws_apigatewayv2.HttpApi(stack, "TemperatureApi", {
-  corsPreflight: {
-    allowMethods: [
-      cdk.aws_apigatewayv2.CorsHttpMethod.OPTIONS,
-      cdk.aws_apigatewayv2.CorsHttpMethod.GET,
-    ],
-    allowOrigins: ["*"],
-  },
-});
-
+const api = new cdk.aws_apigatewayv2.HttpApi(stack, "TemperatureApi");
 api.addRoutes({
-  path: "/temperatures",
+  path: "/",
   integration: new cdk.aws_apigatewayv2_integrations.HttpLambdaIntegration(
     "TemperatureIntegration",
     lambda,
