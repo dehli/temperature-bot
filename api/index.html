@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script crossorigin src="https://d3js.org/d3.v4.min.js"></script>
     <title>Temperature Visualization</title>
     <style>
       body {
@@ -25,14 +25,19 @@
         font-size: 40pt;
         font-family: sans-serif;
       }
+      select {
+        display: block;
+      }
     </style>
   </head>
   <body>
     <!-- Content obtained from https://bl.ocks.org/curran/90240a6d88bdb1411467b21ea0769029 -->
+    <select id="tempUnitSelect"></select>
     <svg width="960" height="500"></svg>
+
     <script>
       const data = [];
-      const xValue = d => d.time * 1000;
+
       const xLabel = 'Time';
       const yValue = d => d.temperature;
       const yLabel = 'Temperature';
@@ -80,28 +85,56 @@
         .tickPadding(15)
         .tickSize(-innerWidth);
 
-      const line = d3.line()
-        .x(d => xScale(xValue(d)))
-        .y(d => yScale(yValue(d)))
-        .curve(d3.curveBasis);
+      const linePath = g.append('path');
 
-      xScale
-        .domain(d3.extent(data, xValue))
-        .range([0, innerWidth]);
+      function drawLine(unit) {
+        const xValue = d => d.time * 1000;
+        const yValue = unit === 'celsius'
+          ? d => d.temperature
+          : d => d.temperature * 1.8 + 32;
 
-      yScale
-        .domain(d3.extent(data, yValue))
-        .range([innerHeight, 0])
-        .nice(yTicks);
+        const line = d3.line()
+          .x(d => xScale(xValue(d)))
+          .y(d => yScale(yValue(d)))
+          .curve(d3.curveBasis);
 
-      g.append('path')
+        xScale
+          .domain(d3.extent(data, xValue))
+          .range([0, innerWidth]);
+
+        yScale
+          .domain(d3.extent(data, yValue))
+          .range([innerHeight, 0])
+          .nice(yTicks);
+
+        linePath
           .attr('fill', 'none')
           .attr('stroke', 'steelblue')
           .attr('stroke-width', 4)
           .attr('d', line(data));
 
-      xAxisG.call(xAxis);
-      yAxisG.call(yAxis);
+        xAxisG.call(xAxis);
+        yAxisG.call(yAxis);
+      }
+
+      drawLine('celsius');
+
+      // Setup temperature unit select
+      const unitSelect = d3.select('#tempUnitSelect');
+
+      unitSelect
+        .selectAll('myOptions')
+        .data(['celsius', 'fahrenheit'])
+        .enter()
+        .append('option')
+        .text(d => d)
+        .attr('value', d => d);
+
+      unitSelect
+        .on('change', function (d) {
+          const unit = d3.select(this).property('value');
+          drawLine(unit);
+        });
 
     </script>
   </body>
