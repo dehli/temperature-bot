@@ -15,3 +15,5 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ vars.AWS_REGION }}
+          CERTIFICATE_ARN: ${{ vars.CERTIFICATE_ARN }}
+          DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}

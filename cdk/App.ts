@@ -1,10 +1,18 @@
 import { App, Stack } from "aws-cdk-lib";
-import * as apigateway from "@aws-cdk/aws-apigatewayv2-alpha";
-import * as apigateway_integrations from "@aws-cdk/aws-apigatewayv2-integrations-alpha";
+import * as acm from "aws-cdk-lib/aws-certificatemanager";
+import * as apigwv2 from "@aws-cdk/aws-apigatewayv2-alpha";
+import { HttpLambdaIntegration } from "@aws-cdk/aws-apigatewayv2-integrations-alpha";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as path from "path";
+
+// Environment variables
+const { CERTIFICATE_ARN } = process.env;
+const { DOMAIN_NAME } = process.env;
+if (!CERTIFICATE_ARN || !DOMAIN_NAME) {
+  throw new Error("Missing env vars");
+}
 
 const app = new App();
 const stack = new Stack(app, "TemperatureMonitor");
@@ -40,13 +48,16 @@ const htmlLambda = new lambda.Function(stack, "TemperatureLambda", {
 });
 table.grantReadData(htmlLambda);
 
-const api = new apigateway.HttpApi(stack, "TemperatureApi");
-api.addRoutes({
-  path: "/",
-  integration: new apigateway_integrations.HttpLambdaIntegration(
-    "TemperatureIntegration",
-    htmlLambda,
-  ),
+const domainName = new apigwv2.DomainName(stack, "TemperatureDomainName", {
+  certificate: acm.Certificate.fromCertificateArn(stack, "Certificate", CERTIFICATE_ARN),
+  domainName: DOMAIN_NAME,
+});
+
+new apigwv2.HttpApi(stack, "TemperatureApi", {
+  defaultDomainMapping: {
+    domainName,
+  },
+  defaultIntegration: new HttpLambdaIntegration("TemperatureIntegration", htmlLambda),
 });
 
 app.synth();
