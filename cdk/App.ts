@@ -1,31 +1,36 @@
-import * as cdk from "monocdk";
+import { App, Stack } from "aws-cdk-lib";
+import * as apigateway from "@aws-cdk/aws-apigatewayv2-alpha";
+import * as apigateway_integrations from "@aws-cdk/aws-apigatewayv2-integrations-alpha";
+import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
+import * as iam from "aws-cdk-lib/aws-iam";
+import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as path from "path";
 
-const app = new cdk.App();
-const stack = new cdk.Stack(app, "TemperatureMonitor");
+const app = new App();
+const stack = new Stack(app, "TemperatureMonitor");
 
-const table = new cdk.aws_dynamodb.Table(stack, "TemperatureTable", {
+const table = new dynamodb.Table(stack, "TemperatureTable", {
   partitionKey: {
     name: "key",
-    type: cdk.aws_dynamodb.AttributeType.STRING,
+    type: dynamodb.AttributeType.STRING,
   },
   sortKey: {
     name: "time",
-    type: cdk.aws_dynamodb.AttributeType.NUMBER,
+    type: dynamodb.AttributeType.NUMBER,
   },
 });
 
-const user = new cdk.aws_iam.User(stack, "WriteToTableUser");
-user.addToPolicy(new cdk.aws_iam.PolicyStatement({
+const user = new iam.User(stack, "WriteToTableUser");
+user.addToPolicy(new iam.PolicyStatement({
   actions: ["dynamodb:PutItem"],
   resources: [table.tableArn],
 }));
 
 // Setup endpoint that we can call to to query for temperatures
-const lambda = new cdk.aws_lambda.Function(stack, "TemperatureLambda", {
+const htmlLambda = new lambda.Function(stack, "TemperatureLambda", {
   handler: "index.handler",
-  runtime: cdk.aws_lambda.Runtime.PYTHON_3_9,
-  code: cdk.aws_lambda.Code.fromAsset(
+  runtime: lambda.Runtime.PYTHON_3_9,
+  code: lambda.Code.fromAsset(
     path.resolve(__dirname, "../api"),
   ),
   environment: {
@@ -33,14 +38,14 @@ const lambda = new cdk.aws_lambda.Function(stack, "TemperatureLambda", {
     TABLE_NAME: table.tableName,
   },
 });
-table.grantReadData(lambda);
+table.grantReadData(htmlLambda);
 
-const api = new cdk.aws_apigatewayv2.HttpApi(stack, "TemperatureApi");
+const api = new apigateway.HttpApi(stack, "TemperatureApi");
 api.addRoutes({
   path: "/",
-  integration: new cdk.aws_apigatewayv2_integrations.HttpLambdaIntegration(
+  integration: new apigateway_integrations.HttpLambdaIntegration(
     "TemperatureIntegration",
-    lambda,
+    htmlLambda,
   ),
 });
 
