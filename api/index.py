@@ -21,6 +21,10 @@ fptr.close()
 
 def save_temperature(event):
     time_now = time.time()
+    try:
+        temperature = float(event["queryStringParameters"]["t"])
+    except BaseException as error:
+        temperature = None
 
     # Persist temperature to DynamoDB
     # table.put_item(
@@ -37,7 +41,10 @@ def save_temperature(event):
 
     return {
         "statusCode": 200,
-        "body": json.dumps(event)
+        "body": json.dumps({
+            "temp": temperature,
+            "time": time_now,
+        })
     }
 
 def generate_index_html(event):
