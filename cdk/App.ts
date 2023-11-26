@@ -46,7 +46,7 @@ const htmlLambda = new lambda.Function(stack, "TemperatureLambda", {
     TABLE_NAME: table.tableName,
   },
 });
-table.grantReadData(htmlLambda);
+table.grantReadWriteData(htmlLambda);
 
 const domainName = new apigwv2.DomainName(stack, "TemperatureDomainName", {
   certificate: acm.Certificate.fromCertificateArn(stack, "Certificate", CERTIFICATE_ARN),

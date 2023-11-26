@@ -26,25 +26,22 @@ def save_temperature(event):
     except BaseException as error:
         temperature = None
 
-    # Persist temperature to DynamoDB
-    # table.put_item(
-    #     Item={
-    #         "key": partition_key,
-    #         "time": int(time_now),
-    #         "temperature": temperature
-    #     },
-    #     ConditionExpression="attribute_not_exists(#key)",
-    #     ExpressionAttributeNames={
-    #         "#key": "key"
-    #     }
-    # )
+    if temperature != None:
+        # Persist temperature to DynamoDB
+        table.put_item(
+            Item={
+                "key": partition_key,
+                "time": int(time_now),
+                "temperature": temperature
+            },
+            ConditionExpression="attribute_not_exists(#key)",
+            ExpressionAttributeNames={
+                "#key": "key"
+            }
+        )
 
     return {
-        "statusCode": 200,
-        "body": json.dumps({
-            "temp": temperature,
-            "time": time_now,
-        })
+        "statusCode": 400 if temperature == None else 200
     }
 
 def generate_index_html(event):
