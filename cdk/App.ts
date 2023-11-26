@@ -3,7 +3,6 @@ import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import * as apigwv2 from "@aws-cdk/aws-apigatewayv2-alpha";
 import { HttpLambdaIntegration } from "@aws-cdk/aws-apigatewayv2-integrations-alpha";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
-import * as iam from "aws-cdk-lib/aws-iam";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as path from "path";
 
@@ -26,12 +25,6 @@ const table = new dynamodb.Table(stack, "TemperatureTable", {
     type: dynamodb.AttributeType.NUMBER,
   },
 });
-
-const user = new iam.User(stack, "WriteToTableUser");
-user.addToPolicy(new iam.PolicyStatement({
-  actions: ["dynamodb:PutItem"],
-  resources: [table.tableArn],
-}));
 
 // Setup endpoint that we can call to to query for temperatures
 const htmlLambda = new lambda.Function(stack, "TemperatureLambda", {
