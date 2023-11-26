@@ -58,6 +58,7 @@ new apigwv2.HttpApi(stack, "TemperatureApi", {
     domainName,
   },
   defaultIntegration: new HttpLambdaIntegration("TemperatureIntegration", htmlLambda),
+  disableExecuteApiEndpoint: true,
 });
 
 app.synth();
