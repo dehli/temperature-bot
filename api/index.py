@@ -1,5 +1,4 @@
 import boto3
-import decimal
 import json
 import os
 import time
@@ -23,7 +22,7 @@ fptr.close()
 def save_temperature(event):
     time_now = time.time()
     try:
-        temperature = decimal.Decimal(event["queryStringParameters"]["t"])
+        temperature = float(event["queryStringParameters"]["t"])
     except BaseException as error:
         temperature = None
 
