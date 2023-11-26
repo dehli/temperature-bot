@@ -41,6 +41,7 @@ const htmlLambda = new lambda.Function(stack, "TemperatureLambda", {
     path.resolve(__dirname, "../api"),
   ),
   environment: {
+    API_PATH,
     PARTITION_KEY: "in-his-wakes",
     TABLE_NAME: table.tableName,
   },
@@ -51,17 +52,12 @@ const domainName = new apigwv2.DomainName(stack, "TemperatureDomainName", {
   certificate: acm.Certificate.fromCertificateArn(stack, "Certificate", CERTIFICATE_ARN),
   domainName: DOMAIN_NAME,
 });
-const integration = new HttpLambdaIntegration("TemperatureIntegration", htmlLambda);
 const api = new apigwv2.HttpApi(stack, "TemperatureApi", {
   defaultDomainMapping: {
     domainName,
   },
-  defaultIntegration:
+  defaultIntegration: new HttpLambdaIntegration("TemperatureIntegration", htmlLambda),
   disableExecuteApiEndpoint: true,
-});
-api.addRoutes({
-  path: API_PATH,
-  integration,
 });
 
 app.synth();
