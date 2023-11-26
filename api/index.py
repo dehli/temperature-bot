@@ -16,6 +16,8 @@ html = fptr.read()
 fptr.close()
 
 def handler(event, lambda_context):
+    print(event)
+
     # Determine timestamp for 24 hours ago (in seconds)
     timestamp = int(time.time() - 24 * 60 * 60)
 

@@ -8,9 +8,8 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as path from "path";
 
 // Environment variables
-const { CERTIFICATE_ARN } = process.env;
-const { DOMAIN_NAME } = process.env;
-if (!CERTIFICATE_ARN || !DOMAIN_NAME) {
+const { API_PATH, CERTIFICATE_ARN, DOMAIN_NAME } = process.env;
+if (!API_PATH || !CERTIFICATE_ARN || !DOMAIN_NAME) {
   throw new Error("Missing env vars");
 }
 
@@ -52,13 +51,17 @@ const domainName = new apigwv2.DomainName(stack, "TemperatureDomainName", {
   certificate: acm.Certificate.fromCertificateArn(stack, "Certificate", CERTIFICATE_ARN),
   domainName: DOMAIN_NAME,
 });
-
-new apigwv2.HttpApi(stack, "TemperatureApi", {
+const integration = new HttpLambdaIntegration("TemperatureIntegration", htmlLambda);
+const api = new apigwv2.HttpApi(stack, "TemperatureApi", {
   defaultDomainMapping: {
     domainName,
   },
-  defaultIntegration: new HttpLambdaIntegration("TemperatureIntegration", htmlLambda),
+  defaultIntegration:
   disableExecuteApiEndpoint: true,
+});
+api.addRoutes({
+  path: API_PATH,
+  integration,
 });
 
 app.synth();

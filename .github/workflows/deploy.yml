@@ -12,6 +12,7 @@ jobs:
       - run: npm ci
       - run: npm run deploy -- --require-approval never
         env:
+          API_PATH: ${{ secrets.API_PATH }}
           AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ vars.AWS_REGION }}
