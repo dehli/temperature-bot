@@ -52,7 +52,7 @@ const domainName = new apigwv2.DomainName(stack, "TemperatureDomainName", {
   certificate: acm.Certificate.fromCertificateArn(stack, "Certificate", CERTIFICATE_ARN),
   domainName: DOMAIN_NAME,
 });
-const api = new apigwv2.HttpApi(stack, "TemperatureApi", {
+new apigwv2.HttpApi(stack, "TemperatureApi", {
   defaultDomainMapping: {
     domainName,
   },
