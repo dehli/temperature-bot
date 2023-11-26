@@ -13,7 +13,7 @@ too much damage occurs.
 ## Architecture
 
 On the boat, there's a Raspberry PI that has a temperature sensor
-and a cell-phone chip. Every 15 minutes it makes an api call to
+and a cell-phone chip. Every 5 minutes it makes an api call to
 AWS (via Lambda) which results in the current temperature being
 stored in Amazon DynamoDB (along with the timestamp for when it
 was collected). Every 1 hour, CloudWatch triggers a step function

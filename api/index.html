@@ -34,9 +34,14 @@
     <!-- Content obtained from https://bl.ocks.org/curran/90240a6d88bdb1411467b21ea0769029 -->
     <select id="tempUnitSelect"></select>
     <svg width="960" height="500"></svg>
+    <p id="tempAge"></p>
 
     <script>
       const data = [];
+
+      const latestData = data[data.length - 1];
+      const latestAge = (Date.now() - latestData?.time * 1000) / 1000 / 60;
+      document.getElementById("tempAge").innerHTML = `${latestAge} minutes old`;
 
       const xLabel = 'Time';
       const yValue = d => d.temperature;
