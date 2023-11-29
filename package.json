@@ -12,5 +12,8 @@
     "clean": "rm -rf out",
     "deploy": "npx cdk deploy",
     "predeploy": "npm run clean && npm run build"
+  },
+  "devDependencies": {
+    "prettier": "3.1.0"
   }
 }

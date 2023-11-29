@@ -21,9 +21,13 @@ that does the following.
 
 1. Query for the most recent temperature
 2. Check if temperature is more than 30 minutes ago.
-  - If so, jump to step 5
+
+- If so, jump to step 5
+
 3. Check if temperature is less than 35F.
-  - If so, jump to step 5
+
+- If so, jump to step 5
+
 4. Exit successfully
 5. Send alert that something is wrong with boat.
 
