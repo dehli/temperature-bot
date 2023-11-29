@@ -14,22 +14,14 @@ too much damage occurs.
 
 On the boat, there's a Raspberry PI that has a temperature sensor
 and a cell-phone chip. Every 5 minutes it makes an api call to
-AWS (via Lambda) which results in the current temperature being
-stored in Amazon DynamoDB (along with the timestamp for when it
-was collected). Every 1 hour, CloudWatch triggers a step function
-that does the following.
+AWS which results in the current temperature and timestamp stored in
+Amazon DynamoDB. Additionally, every 5 minutes, CloudWatch triggers a
+lambda function that does the following:
 
-1. Query for the most recent temperature
-2. Check if temperature is more than 30 minutes ago.
-
-- If so, jump to step 5
-
-3. Check if temperature is less than 35F.
-
-- If so, jump to step 5
-
-4. Exit successfully
-5. Send alert that something is wrong with boat.
+1. Query for the 3 most recent temperatures.
+2. Ensure latest temperature was within the last 10 minutes.
+3. Ensure all temperatures are above 4C (39F).
+4. Send alert if any of the above aren't true.
 
 ## Commands
 
