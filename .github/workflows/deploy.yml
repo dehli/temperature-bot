@@ -18,3 +18,4 @@ jobs:
           AWS_REGION: ${{ vars.AWS_REGION }}
           CERTIFICATE_ARN: ${{ vars.CERTIFICATE_ARN }}
           DOMAIN_NAME: ${{ vars.DOMAIN_NAME }}
+          PARTITION_KEY: ${{ vars.PARTITION_KEY }}
