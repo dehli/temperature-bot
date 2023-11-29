@@ -40,9 +40,8 @@ npm run deploy
 ## Setup on PI
 
 1. Ensure all environment variables are set
-2. Run `pip3 install boto3`
-3. Copy `./pi/main.py` onto device
-4. Setup Cron (add the following line to `/etc/crontab`
+2. Copy `./pi/main.py` onto device
+3. Setup Cron (add the following line to `/etc/crontab`
 
 ```shell
 */5 *   * * *   user-name      . $HOME/.profile; python /home/path/to/main.py
@@ -51,3 +50,13 @@ npm run deploy
 Note:
 `5` can be swapped out for another value depending on how
 often you want to collect the temperature.
+
+### Sensor Setup
+
+![raspberry_pi](https://github.com/dehli/temperature-bot/assets/5856011/887df9a4-3190-4e0c-9160-0a157f1a0c56)
+
+The temperature sensor should have:
+
+- black on GND (eg: 39)
+- yellow on GPIO4 (eg: 7)
+- red on 3.3V PWR (eg: 1)
