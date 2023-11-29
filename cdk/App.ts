@@ -30,9 +30,7 @@ const table = new dynamodb.Table(stack, "TemperatureTable", {
 const htmlLambda = new lambda.Function(stack, "TemperatureLambda", {
   handler: "index.handler",
   runtime: lambda.Runtime.PYTHON_3_9,
-  code: lambda.Code.fromAsset(
-    path.resolve(__dirname, "../api"),
-  ),
+  code: lambda.Code.fromAsset(path.resolve(__dirname, "../api")),
   environment: {
     API_PATH,
     PARTITION_KEY: "in-his-wakes",
@@ -42,14 +40,21 @@ const htmlLambda = new lambda.Function(stack, "TemperatureLambda", {
 table.grantReadWriteData(htmlLambda);
 
 const domainName = new apigwv2.DomainName(stack, "TemperatureDomainName", {
-  certificate: acm.Certificate.fromCertificateArn(stack, "Certificate", CERTIFICATE_ARN),
+  certificate: acm.Certificate.fromCertificateArn(
+    stack,
+    "Certificate",
+    CERTIFICATE_ARN,
+  ),
   domainName: DOMAIN_NAME,
 });
 new apigwv2.HttpApi(stack, "TemperatureApi", {
   defaultDomainMapping: {
     domainName,
   },
-  defaultIntegration: new HttpLambdaIntegration("TemperatureIntegration", htmlLambda),
+  defaultIntegration: new HttpLambdaIntegration(
+    "TemperatureIntegration",
+    htmlLambda,
+  ),
   disableExecuteApiEndpoint: true,
 });
 
