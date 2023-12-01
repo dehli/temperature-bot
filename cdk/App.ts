@@ -7,28 +7,7 @@ import * as events from "aws-cdk-lib/aws-events";
 import * as events_targets from "aws-cdk-lib/aws-events-targets";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as path from "path";
-
-// Environment variables
-const {
-  API_PATH,
-  CERTIFICATE_ARN,
-  DOMAIN_NAME,
-  PAGERDUTY_ROUTING_KEY,
-  PARTITION_KEY,
-  TEMPERATURE_LIMIT,
-  TIME_LIMIT,
-} = process.env;
-if (
-  !API_PATH ||
-  !CERTIFICATE_ARN ||
-  !DOMAIN_NAME ||
-  !PAGERDUTY_ROUTING_KEY ||
-  !PARTITION_KEY ||
-  !TEMPERATURE_LIMIT ||
-  !TIME_LIMIT
-) {
-  throw new Error("Missing env var(s)");
-}
+import env from "./environment";
 
 const app = new App();
 const stack = new Stack(app, "TemperatureMonitor");
@@ -49,8 +28,8 @@ const table = new dynamodb.Table(stack, "TemperatureTable", {
 const htmlLambda = new lambda.Function(stack, "TemperatureLambda", {
   code,
   environment: {
-    API_PATH,
-    PARTITION_KEY,
+    API_PATH: env.API_PATH,
+    PARTITION_KEY: env.PARTITION_KEY,
     TABLE_NAME: table.tableName,
   },
   handler: "index.handler",
@@ -62,9 +41,9 @@ const domainName = new apigwv2.DomainName(stack, "TemperatureDomainName", {
   certificate: acm.Certificate.fromCertificateArn(
     stack,
     "Certificate",
-    CERTIFICATE_ARN,
+    env.CERTIFICATE_ARN,
   ),
-  domainName: DOMAIN_NAME,
+  domainName: env.DOMAIN_NAME,
 });
 new apigwv2.HttpApi(stack, "TemperatureApi", {
   defaultDomainMapping: {
@@ -81,11 +60,11 @@ new apigwv2.HttpApi(stack, "TemperatureApi", {
 const checkTempLambda = new lambda.Function(stack, "CheckTemp", {
   code,
   environment: {
-    PAGERDUTY_ROUTING_KEY,
-    PARTITION_KEY,
+    PAGERDUTY_ROUTING_KEY: env.PAGERDUTY_ROUTING_KEY,
+    PARTITION_KEY: env.PARTITION_KEY,
     TABLE_NAME: table.tableName,
-    TEMPERATURE_LIMIT,
-    TIME_LIMIT,
+    TEMPERATURE_LIMIT: env.TEMPERATURE_LIMIT,
+    TIME_LIMIT: env.TIME_LIMIT,
   },
   handler: "check_temperature.handler",
   runtime: lambda.Runtime.NODEJS_20_X,
