@@ -9,9 +9,23 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as path from "path";
 
 // Environment variables
-const { API_PATH, CERTIFICATE_ARN, DOMAIN_NAME, PARTITION_KEY } = process.env;
-if (!API_PATH || !CERTIFICATE_ARN || !DOMAIN_NAME || !PARTITION_KEY) {
-  throw new Error("Missing env vars");
+const {
+  API_PATH,
+  CERTIFICATE_ARN,
+  DOMAIN_NAME,
+  PAGER_DUTY_API_KEY,
+  PARTITION_KEY,
+  TEMPERATURE_LIMIT,
+} = process.env;
+if (
+  !API_PATH ||
+  !CERTIFICATE_ARN ||
+  !DOMAIN_NAME ||
+  !PAGER_DUTY_API_KEY ||
+  !PARTITION_KEY ||
+  !TEMPERATURE_LIMIT
+) {
+  throw new Error("Missing env var(s)");
 }
 
 const app = new App();
@@ -65,11 +79,14 @@ new apigwv2.HttpApi(stack, "TemperatureApi", {
 const checkTempLambda = new lambda.Function(stack, "CheckTemp", {
   code,
   environment: {
+    PAGER_DUTY_API_KEY,
     PARTITION_KEY,
     TABLE_NAME: table.tableName,
+    TEMPERATURE_LIMIT,
   },
   handler: "check_temperature.handler",
   runtime: lambda.Runtime.NODEJS_20_X,
+  timeout: Duration.seconds(10),
 });
 table.grantReadData(checkTempLambda);
 
