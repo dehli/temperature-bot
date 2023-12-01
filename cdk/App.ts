@@ -13,7 +13,7 @@ const {
   API_PATH,
   CERTIFICATE_ARN,
   DOMAIN_NAME,
-  PAGER_DUTY_API_KEY,
+  PAGERDUTY_ROUTING_KEY,
   PARTITION_KEY,
   TEMPERATURE_LIMIT,
 } = process.env;
@@ -21,7 +21,7 @@ if (
   !API_PATH ||
   !CERTIFICATE_ARN ||
   !DOMAIN_NAME ||
-  !PAGER_DUTY_API_KEY ||
+  !PAGERDUTY_ROUTING_KEY ||
   !PARTITION_KEY ||
   !TEMPERATURE_LIMIT
 ) {
@@ -79,7 +79,7 @@ new apigwv2.HttpApi(stack, "TemperatureApi", {
 const checkTempLambda = new lambda.Function(stack, "CheckTemp", {
   code,
   environment: {
-    PAGER_DUTY_API_KEY,
+    PAGERDUTY_ROUTING_KEY,
     PARTITION_KEY,
     TABLE_NAME: table.tableName,
     TEMPERATURE_LIMIT,
