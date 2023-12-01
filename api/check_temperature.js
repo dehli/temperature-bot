@@ -1,6 +1,7 @@
 const { DynamoDBClient, QueryCommand } = require("@aws-sdk/client-dynamodb");
 
-const { PARTITION_KEY, TABLE_NAME } = process.env;
+const { PAGERDUTY_ROUTING_KEY, PARTITION_KEY, TABLE_NAME, TEMPERATURE_LIMIT } =
+  process.env;
 const client = new DynamoDBClient();
 
 exports.handler = async () => {
@@ -29,11 +30,27 @@ exports.handler = async () => {
 
     // check if temperature reading is too cold
     const lowestTemp = Math.min(...Items.map((i) => +i.temperature.N));
-    if (lowestTemp <= 4) {
+    if (lowestTemp <= TEMPERATURE_LIMIT) {
       throw new Error(`Temperature too low (${lowestTemp})`);
     }
   } catch (e) {
-    // TODO: send email with error message
+    // send alert with error message
     console.log(e.message);
+
+    await fetch("https://events.pagerduty.com/v2/enqueue", {
+      body: JSON.stringify({
+        event_action: "trigger",
+        payload: {
+          summary: e.message,
+          severity: "critical",
+          source: "Temperature Bot",
+        },
+        routing_key: PAGERDUTY_ROUTING_KEY,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+    });
   }
 };
