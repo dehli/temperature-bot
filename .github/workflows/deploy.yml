@@ -21,3 +21,4 @@ jobs:
           PAGERDUTY_ROUTING_KEY: ${{ secrets.PAGERDUTY_ROUTING_KEY }}
           PARTITION_KEY: ${{ vars.PARTITION_KEY }}
           TEMPERATURE_LIMIT: ${{ vars.TEMPERATURE_LIMIT }}
+          TIME_LIMIT: ${{ vars.TIME_LIMIT }}
