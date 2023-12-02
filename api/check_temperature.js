@@ -3,6 +3,7 @@ const { DynamoDBClient, QueryCommand } = require("@aws-sdk/client-dynamodb");
 const {
   PAGERDUTY_ROUTING_KEY,
   PARTITION_KEY,
+  PAUSE_PAGERDUTY,
   TABLE_NAME,
   TEMPERATURE_LIMIT,
   TIME_LIMIT,
@@ -44,20 +45,22 @@ exports.handler = async () => {
     // send alert with error message
     console.log(e.message);
 
-    await fetch("https://events.pagerduty.com/v2/enqueue", {
-      body: JSON.stringify({
-        event_action: "trigger",
-        payload: {
-          summary: e.message,
-          severity: "critical",
-          source: "Temperature Bot",
+    if (PAUSE_PAGERDUTY !== "true") {
+      await fetch("https://events.pagerduty.com/v2/enqueue", {
+        body: JSON.stringify({
+          event_action: "trigger",
+          payload: {
+            summary: e.message,
+            severity: "critical",
+            source: "Temperature Bot",
+          },
+          routing_key: PAGERDUTY_ROUTING_KEY,
+        }),
+        headers: {
+          "Content-Type": "application/json",
         },
-        routing_key: PAGERDUTY_ROUTING_KEY,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-    });
+        method: "POST",
+      });
+    }
   }
 };
