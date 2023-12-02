@@ -16,6 +16,7 @@ const {
   PAGERDUTY_ROUTING_KEY,
   PARTITION_KEY,
   TEMPERATURE_LIMIT,
+  TIME_LIMIT,
 } = process.env;
 if (
   !API_PATH ||
@@ -23,7 +24,8 @@ if (
   !DOMAIN_NAME ||
   !PAGERDUTY_ROUTING_KEY ||
   !PARTITION_KEY ||
-  !TEMPERATURE_LIMIT
+  !TEMPERATURE_LIMIT ||
+  !TIME_LIMIT
 ) {
   throw new Error("Missing env var(s)");
 }
@@ -83,6 +85,7 @@ const checkTempLambda = new lambda.Function(stack, "CheckTemp", {
     PARTITION_KEY,
     TABLE_NAME: table.tableName,
     TEMPERATURE_LIMIT,
+    TIME_LIMIT,
   },
   handler: "check_temperature.handler",
   runtime: lambda.Runtime.NODEJS_20_X,
