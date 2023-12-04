@@ -17,7 +17,7 @@ exports.handler = async (event) => {
         TableName: TABLE_NAME,
         Item: {
           key: { S: PARTITION_KEY },
-          time: { N: timeInSeconds },
+          time: { N: `${timeInSeconds}` },
           temperature: { N: temperature },
         },
         ConditionExpression: "attribute_not_exists(#key)",
