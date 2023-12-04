@@ -28,7 +28,6 @@ const table = new dynamodb.Table(stack, "TemperatureTable", {
 const htmlLambda = new lambda.Function(stack, "TemperatureLambda", {
   code,
   environment: {
-    API_PATH: env.API_PATH,
     PARTITION_KEY: env.PARTITION_KEY,
     TABLE_NAME: table.tableName,
   },
@@ -45,7 +44,7 @@ const domainName = new apigwv2.DomainName(stack, "TemperatureDomainName", {
   ),
   domainName: env.DOMAIN_NAME,
 });
-new apigwv2.HttpApi(stack, "TemperatureApi", {
+const api = new apigwv2.HttpApi(stack, "TemperatureApi", {
   defaultDomainMapping: {
     domainName,
   },
@@ -54,6 +53,23 @@ new apigwv2.HttpApi(stack, "TemperatureApi", {
     htmlLambda,
   ),
   disableExecuteApiEndpoint: true,
+});
+
+// Setup endpoint that we can call to save temperature
+const saveTempLambda = new lambda.Function(stack, "SaveTemp", {
+  code,
+  environment: {
+    PARTITION_KEY: env.PARTITION_KEY,
+    TABLE_NAME: table.tableName,
+  },
+  handler: "save_temperature.handler",
+  runtime: lambda.Runtime.NODEJS_20_X,
+});
+table.grantWriteData(saveTempLambda);
+api.addRoutes({
+  integration: new HttpLambdaIntegration("SaveTempIntegration", saveTempLambda),
+  methods: [apigwv2.HttpMethod.GET],
+  path: env.API_PATH,
 });
 
 // Setup CRON to ensure temperature stays valid
