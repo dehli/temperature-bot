@@ -6,7 +6,6 @@ import time
 from boto3.dynamodb.conditions import Key, Attr
 
 # Environment variables
-api_path = os.environ.get("API_PATH")
 partition_key = os.environ.get("PARTITION_KEY")
 table_name = os.environ.get("TABLE_NAME")
 
@@ -20,32 +19,7 @@ fptr = open(file_path)
 html = fptr.read()
 fptr.close()
 
-def save_temperature(event):
-    time_now = time.time()
-    try:
-        temperature = decimal.Decimal(event["queryStringParameters"]["t"])
-    except BaseException as error:
-        temperature = None
-
-    if temperature != None:
-        # Persist temperature to DynamoDB
-        table.put_item(
-            Item={
-                "key": partition_key,
-                "time": int(time_now),
-                "temperature": temperature
-            },
-            ConditionExpression="attribute_not_exists(#key)",
-            ExpressionAttributeNames={
-                "#key": "key"
-            }
-        )
-
-    return {
-        "statusCode": 400 if temperature == None else 200
-    }
-
-def generate_index_html(event):
+def handler(event, lambda_context):
     # Determine timestamp for 24 hours ago (in seconds)
     timestamp = int(time.time() - 24 * 60 * 60)
 
@@ -69,9 +43,3 @@ def generate_index_html(event):
             "content-type": "text/html"
         }
     }
-
-def handler(event, lambda_context):
-    if event["rawPath"] == api_path:
-        return save_temperature(event)
-    else:
-        return generate_index_html(event)
