@@ -1,7 +1,7 @@
 import { App, Duration, Stack } from "aws-cdk-lib";
 import * as acm from "aws-cdk-lib/aws-certificatemanager";
-import * as apigwv2 from "@aws-cdk/aws-apigatewayv2-alpha";
-import { HttpLambdaIntegration } from "@aws-cdk/aws-apigatewayv2-integrations-alpha";
+import * as apigwv2 from "aws-cdk-lib/aws-apigatewayv2";
+import { HttpLambdaIntegration } from "aws-cdk-lib/aws-apigatewayv2-integrations";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as events from "aws-cdk-lib/aws-events";
 import * as events_targets from "aws-cdk-lib/aws-events-targets";
@@ -24,7 +24,7 @@ const table = new dynamodb.Table(stack, "TemperatureTable", {
   },
 });
 
-// Setup endpoint that we can call to to query for temperatures
+// Setup endpoint that we can call to serve html
 const htmlLambda = new lambda.Function(stack, "TemperatureLambda", {
   code,
   environment: {
