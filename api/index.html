@@ -50,13 +50,25 @@
       const data = [];
 
       const latestData = data[data.length - 1];
-      const latestAge = (Date.now() - latestData?.time * 1000) / 1000 / 60;
-      const latestAgeString = latestAge?.toLocaleString("fullwide", {
+
+      const latestAgeInMinutes =
+        (Date.now() - latestData?.time * 1000) / 1000 / 60;
+      const latestAgeInHours = latestAgeInMinutes / 60;
+      const latestAgeInDays = latestAgeInHours / 24;
+
+      const latestAge =
+        latestAgeInDays > 1
+          ? { unit: "days", value: latestAgeInDays }
+          : latestAgeInHours > 1
+            ? { unit: "hours", value: latestAgeInHours }
+            : { unit: "minutes", value: latestAgeInMinutes };
+
+      const latestAgeString = latestAge.value?.toLocaleString("fullwide", {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       });
       document.getElementById("tempAge").innerHTML =
-        `${latestAgeString} minutes ago`;
+        `${latestAgeString} ${latestAge.unit} ago`;
 
       const xLabel = "Time";
       const yValue = (d) => d.temperature;
