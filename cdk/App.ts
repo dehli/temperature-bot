@@ -25,16 +25,16 @@ const table = new dynamodb.Table(stack, "TemperatureTable", {
 });
 
 // Setup endpoint that we can call to serve html
-const htmlLambda = new lambda.Function(stack, "TemperatureLambda", {
+const htmlLambda = new lambda.Function(stack, "DisplayTemp", {
   code,
   environment: {
     PARTITION_KEY: env.PARTITION_KEY,
     TABLE_NAME: table.tableName,
   },
   handler: "index.handler",
-  runtime: lambda.Runtime.PYTHON_3_9,
+  runtime: lambda.Runtime.NODEJS_20_X,
 });
-table.grantReadWriteData(htmlLambda);
+table.grantReadData(htmlLambda);
 
 const domainName = new apigwv2.DomainName(stack, "TemperatureDomainName", {
   certificate: acm.Certificate.fromCertificateArn(
