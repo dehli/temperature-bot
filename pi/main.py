@@ -9,6 +9,7 @@ import decimal
 import re
 import requests
 import os
+from datetime import datetime
 
 # Pull out environment variables
 base_url = os.environ.get("API_URL")
@@ -17,8 +18,10 @@ error_log_file = "error_log.txt"
 
 # Error handling
 def log_error(error_message):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
     with open(error_log_file, "a") as file:
-        file.write(error_message + "\n")
+        file.write(f"{timestamp} ERROR: {error_message}\n")
 
     # Check if the number of lines in error_log_file is a multiple of 5
     with open(error_log_file, "r") as file:
@@ -38,7 +41,7 @@ try:
     with open(file_path, "r") as temperature_file:
         temperature_text = temperature_file.read()
 except FileNotFoundError:
-    log_error("Error: Temperature file not found.")
+    log_error("Temperature file not found")
     exit()
 
 if temperature_text:
@@ -52,8 +55,8 @@ if temperature_text:
             requests.get(api_url)
             reset_error_log()
         except Exception as exception:
-            log_error(f"Error sending data to API: {str(exception)}")
+            log_error(f"API exception: {str(exception)}")
     else:
-        log_error("Error: Temperature data not found in the file.")
+        log_error("Temperature data not found in the file")
 else:
-    log_error("Error: Empty temperature file.")
+    log_error("Empty temperature file")
