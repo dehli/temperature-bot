@@ -11,9 +11,10 @@ import requests
 import os
 from datetime import datetime
 
-# Pull out environment variables
+# Variables
 base_url = os.environ.get("API_URL")
 file_path = os.environ.get("TEMPERATURE_FILE_PATH")
+skip_restart = os.environ.get("SKIP_RESTART")
 error_log_file = "error_log.txt"
 
 # Error handling
@@ -34,7 +35,8 @@ def reset_error_log():
         pass
 
 def restart_machine():
-    os.system("shutdown -r now")
+    if skip_restart is None:
+        os.system("sudo shutdown -r now")
 
 # Read contents of temperature recordings
 try:
