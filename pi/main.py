@@ -27,16 +27,8 @@ def log_error(error_message):
     # Check if the number of lines in error_log_file is a multiple of 5
     with open(error_log_file, "r") as file:
         line_count = sum(1 for line in file)
-        if line_count % 5 == 0:
-            restart_machine()
-
-def reset_error_log():
-    with open(error_log_file, "w"):
-        pass
-
-def restart_machine():
-    if skip_restart is None:
-        os.system("sudo shutdown -r now")
+        if line_count % 5 == 0 and skip_restart is None:
+            os.system("sudo shutdown -r now")
 
 # Read contents of temperature recordings
 try:
@@ -55,7 +47,6 @@ if temperature_text:
         api_url = '{}?t={}'.format(base_url, temperature)
         try:
             requests.get(api_url)
-            reset_error_log()
         except Exception as exception:
             log_error(f"API exception: {str(exception)}")
     else:
