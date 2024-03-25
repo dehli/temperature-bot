@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@tsconfig/node16": "^16.1.1",
+    "@tsconfig/node16": "^16.1.2",
     "@types/node": "^20.11.30",
     "aws-cdk-lib": "^2.133.0",
     "typescript": "^5.4.3"
