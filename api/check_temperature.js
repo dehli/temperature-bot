@@ -1,9 +1,9 @@
 const { DynamoDBClient, QueryCommand } = require("@aws-sdk/client-dynamodb");
 
 const {
+  PAGERDUTY_DISABLE,
   PAGERDUTY_ROUTING_KEY,
   PARTITION_KEY,
-  PAUSE_PAGERDUTY,
   TABLE_NAME,
   TEMPERATURE_LIMIT,
   TIME_LIMIT,
@@ -45,7 +45,7 @@ exports.handler = async () => {
     // send alert with error message
     console.log(e.message);
 
-    if (PAUSE_PAGERDUTY !== "true") {
+    if (PAGERDUTY_DISABLE !== "true") {
       await fetch("https://events.pagerduty.com/v2/enqueue", {
         body: JSON.stringify({
           event_action: "trigger",
