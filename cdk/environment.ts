@@ -2,6 +2,7 @@ const environmentVariables = [
   "API_PATH",
   "CERTIFICATE_ARN",
   "DOMAIN_NAME",
+  "PAGERDUTY_DISABLE",
   "PAGERDUTY_ROUTING_KEY",
   "PARTITION_KEY",
   "TEMPERATURE_LIMIT",
@@ -12,7 +13,7 @@ export default environmentVariables.reduce(
   (acc, envName) => {
     const value = process.env[envName];
     if (!value) {
-      throw new Error(`Missing environmnet variable: ${envName}`);
+      throw new Error(`Missing environment variable: ${envName}`);
     }
 
     return { ...acc, [envName]: value };

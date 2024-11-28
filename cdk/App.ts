@@ -76,6 +76,7 @@ api.addRoutes({
 const checkTempLambda = new lambda.Function(stack, "CheckTemp", {
   code,
   environment: {
+    PAGERDUTY_DISABLE: env.PAGERDUTY_DISABLE,
     PAGERDUTY_ROUTING_KEY: env.PAGERDUTY_ROUTING_KEY,
     PARTITION_KEY: env.PARTITION_KEY,
     TABLE_NAME: table.tableName,
