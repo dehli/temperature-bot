@@ -2,7 +2,7 @@
   "dependencies": {
     "@tsconfig/node16": "^16.1.3",
     "@types/node": "^22.10.2",
-    "aws-cdk-lib": "^2.172.0",
+    "aws-cdk-lib": "^2.173.0",
     "typescript": "^5.7.2"
   },
   "scripts": {
