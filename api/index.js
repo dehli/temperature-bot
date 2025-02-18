@@ -2,13 +2,18 @@ const { DynamoDBClient, QueryCommand } = require("@aws-sdk/client-dynamodb");
 const fs = require("fs");
 const path = require("path");
 
-const { PARTITION_KEY, TABLE_NAME } = process.env;
+const { PAGERDUTY_DISABLE, PARTITION_KEY, TABLE_NAME } = process.env;
 const client = new DynamoDBClient();
 
 // How many 5 minute intervals in 24 hours
 const Limit = 288;
 
-const html = fs.readFileSync(path.resolve(__dirname, "index.html")).toString();
+const alarmStatus = PAGERDUTY_DISABLE === "true" ? "disabled" : "enabled";
+
+const html = fs
+  .readFileSync(path.resolve(__dirname, "index.html"))
+  .toString()
+  .replace("{{ALARM_STATUS}}", alarmStatus);
 
 exports.handler = async () => {
   // query for recent temperatures

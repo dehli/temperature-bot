@@ -28,6 +28,7 @@ const table = new dynamodb.Table(stack, "TemperatureTable", {
 const htmlLambda = new lambda.Function(stack, "DisplayTemp", {
   code,
   environment: {
+    PAGERDUTY_DISABLE: env.PAGERDUTY_DISABLE,
     PARTITION_KEY: env.PARTITION_KEY,
     TABLE_NAME: table.tableName,
   },
